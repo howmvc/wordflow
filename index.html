@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F6F5F2">
+  <title>WORD FLOW</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- 1. 홈 화면 -->
+    <section id="screen-home" class="screen" aria-labelledby="home-title">
+      <div class="home">
+        <h1 id="home-title" class="wordmark" tabindex="-1">WORD FLOW</h1>
+        <p class="tagline">오늘도 가볍게 영어 한 번.</p>
+        <p class="lead">외우려고 애쓰지 않아도 괜찮아요.<br>계속 만나다 보면 익숙해집니다.</p>
+
+        <p id="word-count" class="word-count" role="status">단어를 불러오는 중…</p>
+
+        <button id="start-btn" class="btn btn-primary" type="button" disabled>시작하기</button>
+
+        <div id="load-error" class="error-box" role="alert" hidden>
+          <p class="error-title">데이터를 불러오지 못했어요</p>
+          <p id="load-error-message" class="error-message"></p>
+          <button id="retry-btn" class="btn btn-ghost" type="button">다시 시도</button>
+        </div>
+
+        <p class="hint">몇 문제를 풀든 괜찮아요. 하고 싶은 만큼만 하고, 언제든 종료하세요.</p>
+      </div>
+    </section>
+
+    <!-- 2. 퀴즈 화면 -->
+    <section id="screen-quiz" class="screen" aria-labelledby="quiz-brand" hidden>
+      <header class="quiz-top">
+        <span id="quiz-brand" class="brand-small">WORD FLOW</span>
+        <div class="quiz-stats">
+          <span class="stat"><span class="stat-label">시도</span> <span id="attempt-count">0</span></span>
+          <span class="stat stat-time" aria-label="경과 시간"><span id="clock">00:00:00</span></span>
+        </div>
+        <button id="exit-btn" class="btn btn-ghost btn-small" type="button">종료</button>
+      </header>
+
+      <div class="quiz-body">
+        <div class="word-area">
+          <p id="pos-label" class="pos-label"></p>
+          <h2 id="quiz-word" class="quiz-word" lang="en"></h2>
+        </div>
+
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+        <div id="choices" class="choices" role="group" aria-label="한국어 뜻 보기">
+          <button class="choice" type="button" data-index="0"><span class="choice-num" aria-hidden="true">1</span><span class="choice-text"></span><span class="choice-mark" aria-hidden="true"></span></button>
+          <button class="choice" type="button" data-index="1"><span class="choice-num" aria-hidden="true">2</span><span class="choice-text"></span><span class="choice-mark" aria-hidden="true"></span></button>
+          <button class="choice" type="button" data-index="2"><span class="choice-num" aria-hidden="true">3</span><span class="choice-text"></span><span class="choice-mark" aria-hidden="true"></span></button>
+          <button class="choice" type="button" data-index="3"><span class="choice-num" aria-hidden="true">4</span><span class="choice-text"></span><span class="choice-mark" aria-hidden="true"></span></button>
+          <button class="choice" type="button" data-index="4"><span class="choice-num" aria-hidden="true">5</span><span class="choice-text"></span><span class="choice-mark" aria-hidden="true"></span></button>
+        </div>
+        <p class="key-hint">키보드 1–5 키로도 선택할 수 있어요</p>
+      </div>
+    </section>
+
+    <!-- 3. 결과 및 오답 복습 화면 -->
+    <section id="screen-result" class="screen" aria-labelledby="result-title" hidden>
+      <div class="result">
+        <h2 id="result-title" class="result-title" tabindex="-1">오늘의 기록</h2>
+        <p id="result-headline" class="result-headline"></p>
+        <p id="result-notice" class="result-notice" hidden></p>
+
+        <dl class="summary">
+          <div class="summary-item"><dt>정답</dt><dd id="sum-correct">0</dd></div>
+          <div class="summary-item"><dt>오답</dt><dd id="sum-wrong">0</dd></div>
+          <div class="summary-item"><dt>정답률</dt><dd id="sum-accuracy">–</dd></div>
+          <div class="summary-item"><dt>소요 시간</dt><dd id="sum-time">0초</dd></div>
+        </dl>
+
+        <h3 id="review-title" class="review-title"></h3>
+        <div id="review-list" class="review-list"></div>
+
+        <div class="result-actions">
+          <button id="home-btn" class="btn btn-primary" type="button">홈으로</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="engine.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

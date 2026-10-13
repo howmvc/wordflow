@@ -1,0 +1,432 @@
+[
+  {
+    "word": "abundant",
+    "pos": "adjective",
+    "pronunciation": "/əˈbʌndənt/",
+    "meaning": "풍부한",
+    "example": "There is abundant evidence to support it.",
+    "example_translation": "그것을 뒷받침하는 풍부한 증거가 있다.",
+    "level": "B2",
+    "group": "1"
+  },
+  {
+    "word": "reluctant",
+    "pos": "adjective",
+    "pronunciation": "/rɪˈlʌktənt/",
+    "meaning": "꺼리는",
+    "example": "She was reluctant to answer the question.",
+    "example_translation": "그녀는 그 질문에 답하기를 꺼렸다.",
+    "level": "B2",
+    "group": "1"
+  },
+  {
+    "word": "ancient",
+    "pos": "adjective",
+    "pronunciation": "/ˈeɪnʃənt/",
+    "meaning": "고대의",
+    "example": "They found ancient ruins near the river.",
+    "example_translation": "그들은 강 근처에서 고대 유적을 발견했다.",
+    "level": "B1",
+    "group": "1"
+  },
+  {
+    "word": "fragile",
+    "pos": "adjective",
+    "pronunciation": "/ˈfrædʒaɪl/",
+    "meaning": "부서지기 쉬운",
+    "example": "Please handle the fragile package with care.",
+    "example_translation": "부서지기 쉬운 소포를 조심스럽게 다뤄주세요.",
+    "level": "B1",
+    "group": "1"
+  },
+  {
+    "word": "generous",
+    "pos": "adjective",
+    "pronunciation": "/ˈdʒenərəs/",
+    "meaning": "관대한",
+    "example": "He is generous with his time and money.",
+    "example_translation": "그는 시간과 돈에 관대하다.",
+    "level": "A2",
+    "group": "1"
+  },
+  {
+    "word": "curious",
+    "pos": "adjective",
+    "pronunciation": "/ˈkjʊəriəs/",
+    "meaning": "호기심 많은",
+    "example": "The curious child asked many questions.",
+    "example_translation": "그 호기심 많은 아이는 많은 질문을 했다.",
+    "level": "A2",
+    "group": "1"
+  },
+  {
+    "word": "cautious",
+    "pos": "adjective",
+    "pronunciation": "/ˈkɔːʃəs/",
+    "meaning": "조심스러운",
+    "example": "Drivers should be cautious in the rain.",
+    "example_translation": "운전자들은 비가 올 때 조심해야 한다.",
+    "level": "B1",
+    "group": "1"
+  },
+  {
+    "word": "complex",
+    "pos": "adjective",
+    "pronunciation": "/kəmˈpleks/",
+    "meaning": "복잡한",
+    "example": "The instructions were too complex to follow.",
+    "example_translation": "그 설명서는 따라가기에 너무 복잡했다.",
+    "level": "B2",
+    "group": "2"
+  },
+  {
+    "word": "efficient",
+    "pos": "adjective",
+    "pronunciation": "/ɪˈfɪʃnt/",
+    "meaning": "효율적인",
+    "example": "The new system is far more efficient.",
+    "example_translation": "새 시스템이 훨씬 더 효율적이다.",
+    "level": "B2",
+    "group": "2"
+  },
+  {
+    "word": "flexible",
+    "pos": "adjective",
+    "pronunciation": "/ˈfleksəbl/",
+    "meaning": "유연한",
+    "example": "My work schedule is quite flexible.",
+    "example_translation": "내 업무 일정은 꽤 유연하다.",
+    "level": "B1",
+    "group": "2"
+  },
+  {
+    "word": "obvious",
+    "pos": "adjective",
+    "pronunciation": "/ˈɒbviəs/",
+    "meaning": "명백한",
+    "example": "It was obvious that he was upset.",
+    "example_translation": "그가 화가 났다는 것이 명백했다.",
+    "level": "A2",
+    "group": "2"
+  },
+  {
+    "word": "essential",
+    "pos": "adjective",
+    "pronunciation": "/ɪˈsenʃl/",
+    "meaning": "필수적인",
+    "example": "Water is essential for survival.",
+    "example_translation": "물은 생존에 필수적이다.",
+    "level": "B1",
+    "group": "2"
+  },
+  {
+    "word": "reliable",
+    "pos": "adjective",
+    "pronunciation": "/rɪˈlaɪəbl/",
+    "meaning": "믿을 수 있는",
+    "example": "She is a reliable and honest friend.",
+    "example_translation": "그녀는 믿을 수 있고 정직한 친구다.",
+    "level": "B1",
+    "group": "2"
+  },
+  {
+    "word": "humble",
+    "pos": "adjective",
+    "pronunciation": "/ˈhʌmbl/",
+    "meaning": "겸손한",
+    "example": "Despite his success, he remained humble.",
+    "example_translation": "성공에도 불구하고 그는 겸손함을 유지했다.",
+    "level": "B2",
+    "group": "2"
+  },
+  {
+    "word": "vivid",
+    "pos": "adjective",
+    "pronunciation": "/ˈvɪvɪd/",
+    "meaning": "생생한",
+    "example": "He gave a vivid description of the accident.",
+    "example_translation": "그는 그 사고를 생생하게 묘사했다.",
+    "level": "B2",
+    "group": "2"
+  },
+  {
+    "word": "acquire",
+    "pos": "verb",
+    "pronunciation": "/əˈkwaɪər/",
+    "meaning": "습득하다",
+    "example": "It takes years to acquire a new language.",
+    "example_translation": "새로운 언어를 습득하는 데는 몇 년이 걸린다.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "achieve",
+    "pos": "verb",
+    "pronunciation": "/əˈtʃiːv/",
+    "meaning": "성취하다",
+    "example": "She worked hard to achieve her goals.",
+    "example_translation": "그녀는 목표를 성취하기 위해 열심히 일했다.",
+    "level": "A2",
+    "group": "3"
+  },
+  {
+    "word": "assume",
+    "pos": "verb",
+    "pronunciation": "/əˈsjuːm/",
+    "meaning": "가정하다",
+    "example": "Let's not assume anything without evidence.",
+    "example_translation": "증거 없이 아무것도 가정하지 말자.",
+    "level": "B1",
+    "group": "3"
+  },
+  {
+    "word": "hesitate",
+    "pos": "verb",
+    "pronunciation": "/ˈhezɪteɪt/",
+    "meaning": "망설이다",
+    "example": "Don't hesitate to ask for help.",
+    "example_translation": "도움을 요청하는 것을 망설이지 마라.",
+    "level": "B1",
+    "group": "3"
+  },
+  {
+    "word": "emerge",
+    "pos": "verb",
+    "pronunciation": "/ɪˈmɜːdʒ/",
+    "meaning": "나타나다",
+    "example": "A new problem emerged during the meeting.",
+    "example_translation": "회의 중에 새로운 문제가 나타났다.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "dismiss",
+    "pos": "verb",
+    "pronunciation": "/dɪsˈmɪs/",
+    "meaning": "무시하다",
+    "example": "He dismissed the idea as unrealistic.",
+    "example_translation": "그는 그 생각을 비현실적이라며 무시했다.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "resolve",
+    "pos": "verb",
+    "pronunciation": "/rɪˈzɒlv/",
+    "meaning": "해결하다",
+    "example": "They managed to resolve the conflict peacefully.",
+    "example_translation": "그들은 그 갈등을 평화롭게 해결해냈다.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "enhance",
+    "pos": "verb",
+    "pronunciation": "/ɪnˈhɑːns/",
+    "meaning": "향상시키다",
+    "example": "Regular practice will enhance your skills.",
+    "example_translation": "꾸준한 연습은 당신의 실력을 향상시킬 것이다.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "establish",
+    "pos": "verb",
+    "pronunciation": "/ɪˈstæblɪʃ/",
+    "meaning": "설립하다",
+    "example": "The company was established in 1990.",
+    "example_translation": "그 회사는 1990년에 설립되었다.",
+    "level": "B1",
+    "group": "3"
+  },
+  {
+    "word": "maintain",
+    "pos": "verb",
+    "pronunciation": "/meɪnˈteɪn/",
+    "meaning": "유지하다",
+    "example": "It's important to maintain good habits.",
+    "example_translation": "좋은 습관을 유지하는 것이 중요하다.",
+    "level": "B1",
+    "group": "3"
+  },
+  {
+    "word": "neglect",
+    "pos": "verb",
+    "pronunciation": "/nɪˈɡlekt/",
+    "meaning": "소홀히 하다",
+    "example": "Don't neglect your health for work.",
+    "example_translation": "일 때문에 건강을 소홀히 하지 마라.",
+    "level": "B2",
+    "group": "3"
+  },
+  {
+    "word": "evidence",
+    "pos": "noun",
+    "pronunciation": "/ˈevɪdəns/",
+    "meaning": "증거",
+    "example": "The police found no evidence of a crime.",
+    "example_translation": "경찰은 범죄의 증거를 찾지 못했다.",
+    "level": "B1",
+    "group": "4"
+  },
+  {
+    "word": "consequence",
+    "pos": "noun",
+    "pronunciation": "/ˈkɒnsɪkwəns/",
+    "meaning": "결과",
+    "example": "Every action has a consequence.",
+    "example_translation": "모든 행동에는 결과가 따른다.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "opportunity",
+    "pos": "noun",
+    "pronunciation": "/ˌɒpəˈtjuːnəti/",
+    "meaning": "기회",
+    "example": "This job offers a great opportunity to grow.",
+    "example_translation": "이 직업은 성장할 좋은 기회를 제공한다.",
+    "level": "A2",
+    "group": "4"
+  },
+  {
+    "word": "obstacle",
+    "pos": "noun",
+    "pronunciation": "/ˈɒbstəkl/",
+    "meaning": "장애물",
+    "example": "Lack of funding was a major obstacle.",
+    "example_translation": "자금 부족이 큰 장애물이었다.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "perspective",
+    "pos": "noun",
+    "pronunciation": "/pəˈspektɪv/",
+    "meaning": "관점",
+    "example": "Try to see it from her perspective.",
+    "example_translation": "그녀의 관점에서 그것을 보려고 노력해라.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "strategy",
+    "pos": "noun",
+    "pronunciation": "/ˈstrætədʒi/",
+    "meaning": "전략",
+    "example": "We need a new marketing strategy.",
+    "example_translation": "우리는 새로운 마케팅 전략이 필요하다.",
+    "level": "B1",
+    "group": "4"
+  },
+  {
+    "word": "tendency",
+    "pos": "noun",
+    "pronunciation": "/ˈtendənsi/",
+    "meaning": "경향",
+    "example": "He has a tendency to arrive late.",
+    "example_translation": "그는 늦게 도착하는 경향이 있다.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "circumstance",
+    "pos": "noun",
+    "pronunciation": "/ˈsɜːkəmstəns/",
+    "meaning": "상황",
+    "example": "Under no circumstance should you leave the door open.",
+    "example_translation": "어떤 상황에서도 문을 열어두면 안 된다.",
+    "level": "C1",
+    "group": "4"
+  },
+  {
+    "word": "commitment",
+    "pos": "noun",
+    "pronunciation": "/kəˈmɪtmənt/",
+    "meaning": "헌신",
+    "example": "Her commitment to the project was impressive.",
+    "example_translation": "그 프로젝트에 대한 그녀의 헌신은 인상적이었다.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "assumption",
+    "pos": "noun",
+    "pronunciation": "/əˈsʌmpʃn/",
+    "meaning": "가정",
+    "example": "That's a dangerous assumption to make.",
+    "example_translation": "그것은 위험한 가정이다.",
+    "level": "B2",
+    "group": "4"
+  },
+  {
+    "word": "gradually",
+    "pos": "adverb",
+    "pronunciation": "/ˈɡrædʒuəli/",
+    "meaning": "점차",
+    "example": "The weather gradually improved over the week.",
+    "example_translation": "날씨가 그 주 동안 점차 좋아졌다.",
+    "level": "B1",
+    "group": "5"
+  },
+  {
+    "word": "eventually",
+    "pos": "adverb",
+    "pronunciation": "/ɪˈventʃuəli/",
+    "meaning": "결국",
+    "example": "Eventually, they found a solution.",
+    "example_translation": "결국 그들은 해결책을 찾았다.",
+    "level": "B1",
+    "group": "5"
+  },
+  {
+    "word": "barely",
+    "pos": "adverb",
+    "pronunciation": "/ˈbeəli/",
+    "meaning": "간신히",
+    "example": "He barely passed the exam.",
+    "example_translation": "그는 간신히 시험을 통과했다.",
+    "level": "B2",
+    "group": "5"
+  },
+  {
+    "word": "thoroughly",
+    "pos": "adverb",
+    "pronunciation": "/ˈθʌrəli/",
+    "meaning": "철저하게",
+    "example": "She thoroughly reviewed the report.",
+    "example_translation": "그녀는 보고서를 철저하게 검토했다.",
+    "level": "B2",
+    "group": "5"
+  },
+  {
+    "word": "occasionally",
+    "pos": "adverb",
+    "pronunciation": "/əˈkeɪʒnəli/",
+    "meaning": "가끔",
+    "example": "We occasionally meet for coffee.",
+    "example_translation": "우리는 가끔 커피를 마시기 위해 만난다.",
+    "level": "B1",
+    "group": "5"
+  },
+  {
+    "word": "deliberately",
+    "pos": "adverb",
+    "pronunciation": "/dɪˈlɪbərətli/",
+    "meaning": "고의로",
+    "example": "He deliberately ignored her message.",
+    "example_translation": "그는 고의로 그녀의 메시지를 무시했다.",
+    "level": "B2",
+    "group": "5"
+  },
+  {
+    "word": "consistently",
+    "pos": "adverb",
+    "pronunciation": "/kənˈsɪstəntli/",
+    "meaning": "일관되게",
+    "example": "She consistently performs well at work.",
+    "example_translation": "그녀는 직장에서 일관되게 좋은 성과를 낸다.",
+    "level": "B2",
+    "group": "5"
+  }
+]
