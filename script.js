@@ -5,11 +5,17 @@
   'use strict';
 
   var E = window.WordFlowEngine;
-  var DATA_URL = 'data.json';           // 상대 경로: 하위 경로에 배포해도 동작
+  var DATA_DIR = 'data/';               // 상대 경로: 하위 경로에 배포해도 동작
+  var MANIFEST_FILE = 'manifest.json';  // data 폴더 안의 데이터셋 목록(파일명 배열)
   var DELAY_CORRECT_MS = 800;
   var DELAY_WRONG_MS = 1800;            // 정답 뜻을 읽을 시간을 조금 더 준다
 
   var state = {
+    datasets: [],         // [{ file, name }]  data 폴더의 데이터셋 목록
+    cache: new Map(),     // file → { engine, total }  (메모리 캐시, 저장하지 않음)
+    selectedFile: null,
+    loadToken: 0,         // 늦게 도착한 응답을 무시하기 위한 토큰
+    direction: E.DIR_EN2KO,
     engine: null,
     totalWords: 0,
     session: null,
@@ -26,6 +32,9 @@
   var el = {
     screens: { home: $('screen-home'), quiz: $('screen-quiz'), result: $('screen-result') },
     startBtn: $('start-btn'), wordCount: $('word-count'),
+    homeOptions: $('home-options'), datasetSelect: $('dataset-select'),
+    dirSwitch: $('direction-switch'), dirLeft: $('dir-left'), dirRight: $('dir-right'),
+    meanings: $('quiz-meanings'),
     loadError: $('load-error'), loadErrorMsg: $('load-error-message'), retryBtn: $('retry-btn'),
     attempt: $('attempt-count'), clock: $('clock'), exitBtn: $('exit-btn'),
     word: $('quiz-word'), pos: $('pos-label'), feedback: $('feedback'),
@@ -46,46 +55,172 @@
     if (focusTarget) focusTarget.focus({ preventScroll: true });
   }
 
-  /* ---------------- 데이터 로딩 ---------------- */
+  /* ---------------- 데이터셋 목록 · 로딩 ---------------- */
 
-  function setLoadError(message) {
+  function datasetName(file) { return file.replace(/\.json$/i, ''); }
+
+  function isSafeFileName(f) {
+    return typeof f === 'string' && f.trim() !== '' && !/[\\/]/.test(f) && f.charAt(0) !== '.';
+  }
+
+  function noManifestError() {
+    return new E.DataError('data 폴더의 데이터셋 목록을 찾을 수 없습니다.\n' +
+      'data/manifest.json 파일에 ["이름1.json", "이름2.json"] 형태로 파일명을 적어 주세요.');
+  }
+
+  function parseManifest(text) {
+    var json;
+    try { json = JSON.parse(text); }
+    catch (e) { throw new E.DataError('data/manifest.json의 형식이 올바르지 않습니다. (JSON 문법 오류)\n' + e.message); }
+    var list = Array.isArray(json) ? json : (json && Array.isArray(json.files) ? json.files : null);
+    if (!list) throw new E.DataError('data/manifest.json은 파일명 배열이어야 합니다. 예: ["이름1.json", "이름2.json"]');
+    var seen = {};
+    var files = list.filter(function (f) {
+      if (!isSafeFileName(f) || seen[f]) return false;
+      seen[f] = true;
+      return true;
+    });
+    if (files.length === 0) throw new E.DataError('data/manifest.json에 사용할 수 있는 파일명이 없습니다.');
+    return files.map(function (f) { return { file: f, name: datasetName(f) }; });
+  }
+
+  /** manifest.json 이 없을 때만 쓰는 대체 수단: 서버가 폴더 목록(디렉터리 리스팅)을 보여주면 .json 링크를 읽는다. */
+  function listFromDirectory() {
+    return fetch(DATA_DIR, { cache: 'no-cache' }).then(function (res) {
+      if (!res.ok) throw noManifestError();
+      return res.text();
+    }).then(function (html) {
+      var found = [], seen = {}, re = /href\s*=\s*["']([^"'?#]+?\.json)["']/gi, m;
+      while ((m = re.exec(html)) !== null) {
+        var name;
+        try { name = decodeURIComponent(m[1]); } catch (e) { name = m[1]; }
+        name = name.split('/').pop();
+        if (!isSafeFileName(name) || name.toLowerCase() === MANIFEST_FILE || seen[name]) continue;
+        seen[name] = true;
+        found.push(name);
+      }
+      if (found.length === 0) throw noManifestError();
+      found.sort(function (x, y) { return x.localeCompare(y, 'ko', { numeric: true }); });
+      return found.map(function (f) { return { file: f, name: datasetName(f) }; });
+    });
+  }
+
+  function fetchDatasetList() {
+    return fetch(DATA_DIR + MANIFEST_FILE, { cache: 'no-cache' }).then(
+      function (res) { return res.ok ? res.text().then(parseManifest) : listFromDirectory(); },
+      function () { return listFromDirectory(); }
+    );
+  }
+
+  function networkErrorMessage(what) {
+    return what + '을(를) 읽는 중 문제가 발생했습니다.\n' + (location.protocol === 'file:'
+      ? '파일을 직접 열면(file://) 브라우저가 읽기를 막습니다. 로컬 서버(예: python -m http.server)로 실행해 주세요.'
+      : '네트워크 연결과 파일 위치를 확인해 주세요.');
+  }
+
+  /** keepOptions: 데이터셋 하나만 실패한 경우 드롭다운은 그대로 두어 다른 데이터셋을 고를 수 있게 한다. */
+  function setLoadError(message, keepOptions) {
     el.loadErrorMsg.textContent = message;
     el.loadError.hidden = false;
     el.startBtn.hidden = true;
+    el.startBtn.disabled = true;
     el.wordCount.textContent = '';
+    state.engine = null;
+    if (!keepOptions) el.homeOptions.hidden = true;
   }
 
-  function loadData() {
+  function populateSelect() {
+    el.datasetSelect.textContent = '';
+    state.datasets.forEach(function (d) {
+      var opt = document.createElement('option');
+      opt.value = d.file;
+      opt.textContent = d.name;      // 확장자를 뺀 이름
+      el.datasetSelect.appendChild(opt);
+    });
+    el.datasetSelect.disabled = false;
+  }
+
+  function applyDataset(entry) {
+    state.engine = entry.engine;
+    state.totalWords = entry.total;
+    el.wordCount.textContent = entry.total.toLocaleString('ko-KR') + ' words';
+    el.startBtn.disabled = false;
+  }
+
+  function loadDataset(file) {
+    var token = ++state.loadToken;
+    state.selectedFile = file;
     state.engine = null;
-    el.startBtn.disabled = true;
-    el.startBtn.hidden = false;
     el.loadError.hidden = true;
+    el.startBtn.hidden = false;
+    el.startBtn.disabled = true;
+
+    if (state.cache.has(file)) { applyDataset(state.cache.get(file)); return; }
     el.wordCount.textContent = '단어를 불러오는 중…';
 
-    fetch(DATA_URL, { cache: 'no-cache' })
+    var label = '「' + datasetName(file) + '」';
+    fetch(DATA_DIR + encodeURIComponent(file), { cache: 'no-cache' })
       .then(function (res) {
-        if (!res.ok) throw new E.DataError('data.json을 불러오지 못했습니다. (HTTP ' + res.status + ')\n파일이 index.html과 같은 위치에 있는지 확인해 주세요.');
+        if (!res.ok) throw new E.DataError(label + ' 파일을 불러오지 못했습니다. (HTTP ' + res.status + ')\ndata 폴더에 파일이 있는지 확인해 주세요.');
         return res.text();
       })
       .then(function (text) {
         var json;
         try { json = JSON.parse(text); }
-        catch (e) { throw new E.DataError('data.json의 형식이 올바르지 않습니다. (JSON 문법 오류)\n' + e.message); }
-        var parsed = E.normalizeRecords(json);
-        state.engine = new E.QuizEngine(parsed.records);
-        state.totalWords = parsed.records.length;
-        if (parsed.skipped > 0 && window.console) console.warn('word가 없거나 잘못된 항목 ' + parsed.skipped + '개를 건너뛰었습니다.');
-        el.wordCount.textContent = state.totalWords.toLocaleString('ko-KR') + ' words';
-        el.startBtn.disabled = false;
+        catch (e) { throw new E.DataError(label + ' 파일의 형식이 올바르지 않습니다. (JSON 문법 오류)\n' + e.message); }
+        var parsed;
+        try { parsed = E.normalizeRecords(json); }
+        catch (e) { if (e instanceof E.DataError) e = new E.DataError(label + ' ' + e.userMessage); throw e; }
+        var engine;
+        try { engine = new E.QuizEngine(parsed.records); }
+        catch (e) { if (e instanceof E.DataError) e = new E.DataError(label + ' ' + e.userMessage); throw e; }
+        if (parsed.skipped > 0 && window.console) console.warn(label + ': word가 없거나 잘못된 항목 ' + parsed.skipped + '개를 건너뛰었습니다.');
+        var entry = { engine: engine, total: parsed.records.length };
+        state.cache.set(file, entry);
+        if (token === state.loadToken) applyDataset(entry);   // 그 사이 다른 데이터셋을 골랐다면 무시
       })
       .catch(function (err) {
-        if (err instanceof E.DataError) { setLoadError(err.userMessage); return; }
-        var msg = 'data.json을 읽는 중 문제가 발생했습니다.\n';
-        msg += location.protocol === 'file:'
-          ? '파일을 직접 열면(file://) 브라우저가 읽기를 막습니다. 로컬 서버(예: python -m http.server)로 실행해 주세요.'
-          : '네트워크 연결과 파일 위치를 확인해 주세요.';
-        setLoadError(msg);
+        if (token !== state.loadToken) return;
+        setLoadError(err instanceof E.DataError ? err.userMessage : networkErrorMessage(label + ' 파일'), true);
       });
+  }
+
+  function init() {
+    state.datasets = [];
+    el.homeOptions.hidden = false;
+    el.datasetSelect.disabled = true;
+    el.loadError.hidden = true;
+    el.startBtn.hidden = false;
+    el.startBtn.disabled = true;
+    el.wordCount.textContent = '단어장을 불러오는 중…';
+
+    fetchDatasetList()
+      .then(function (list) {
+        state.datasets = list;
+        populateSelect();
+        loadDataset(list[0].file);
+      })
+      .catch(function (err) {
+        setLoadError(err instanceof E.DataError ? err.userMessage : networkErrorMessage('data 폴더'), false);
+      });
+  }
+
+  function retryLoad() {
+    if (state.datasets.length === 0) init();
+    else loadDataset(el.datasetSelect.value || state.selectedFile);
+  }
+
+  /* ---------------- 출제 방향 토글 ---------------- */
+
+  function setDirection(dir) {
+    state.direction = dir;
+    var ko2en = dir === E.DIR_KO2EN;
+    el.dirSwitch.setAttribute('aria-checked', ko2en ? 'true' : 'false');
+    el.dirSwitch.setAttribute('aria-label', ko2en
+      ? '출제 방향: 한국어 뜻을 보고 영어 단어 고르기'
+      : '출제 방향: 영어 단어를 보고 한국어 뜻 고르기');
+    el.dirLeft.classList.toggle('is-on', !ko2en);
+    el.dirRight.classList.toggle('is-on', ko2en);
   }
 
   /* ---------------- 세션 ---------------- */
@@ -132,7 +267,7 @@
     if (!state.active) return;
     var q;
     try {
-      q = state.engine.nextQuestion();
+      q = state.engine.nextQuestion(state.direction);
     } catch (err) {
       endSession(err instanceof E.DataError ? err.userMessage : '문제를 만드는 중 오류가 발생해 세션을 종료했어요.');
       return;
@@ -140,13 +275,30 @@
     state.question = q;
     state.locked = false;
 
-    el.word.textContent = q.record.word;
+    if (q.direction === E.DIR_KO2EN) {
+      // 한 → 영: 뜻이 여러 개면 모두 보여준다
+      el.word.hidden = true;
+      el.meanings.textContent = '';
+      q.promptMeanings.forEach(function (m) {
+        var li = document.createElement('li');
+        li.textContent = m;
+        el.meanings.appendChild(li);
+      });
+      el.meanings.classList.toggle('is-multi', q.promptMeanings.length > 1);
+      el.meanings.hidden = false;
+    } else {
+      el.meanings.hidden = true;
+      el.word.hidden = false;
+      el.word.textContent = q.promptWord;
+    }
     el.pos.textContent = E.toList(q.record.raw.pos).join(', ');
     el.feedback.className = 'feedback';
     el.feedback.textContent = '';
 
     el.choices.forEach(function (btn, i) {
-      btn.querySelector('.choice-text').textContent = q.choices[i];
+      var label = btn.querySelector('.choice-text');
+      label.textContent = q.choices[i];
+      label.lang = q.direction === E.DIR_KO2EN ? 'en' : 'ko';
       btn.removeAttribute('data-state');
       btn.removeAttribute('aria-disabled');
     });
@@ -311,7 +463,13 @@
   /* ---------------- 이벤트 ---------------- */
 
   el.startBtn.addEventListener('click', startSession);
-  el.retryBtn.addEventListener('click', loadData);
+  el.retryBtn.addEventListener('click', retryLoad);
+  el.datasetSelect.addEventListener('change', function () { loadDataset(el.datasetSelect.value); });
+  el.dirSwitch.addEventListener('click', function () {
+    setDirection(state.direction === E.DIR_KO2EN ? E.DIR_EN2KO : E.DIR_KO2EN);
+  });
+  el.dirLeft.addEventListener('click', function () { setDirection(E.DIR_EN2KO); });
+  el.dirRight.addEventListener('click', function () { setDirection(E.DIR_KO2EN); });
   el.exitBtn.addEventListener('click', function () { endSession(); });
   el.homeBtn.addEventListener('click', function () { showScreen('home'); });
 
@@ -328,5 +486,6 @@
   // 탭이 다시 보일 때 실제 경과 시각 기준으로 즉시 갱신
   document.addEventListener('visibilitychange', updateClock);
 
-  loadData();
+  setDirection(E.DIR_EN2KO);
+  init();
 })();
