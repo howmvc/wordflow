@@ -17,14 +17,16 @@
         <p class="tagline">오늘도 가볍게 영어 한 번.</p>
         <p class="lead">외우려고 애쓰지 않아도 괜찮아요.<br>계속 만나다 보면 익숙해집니다.</p>
 
-        <p id="word-count" class="word-count" role="status">단어를 불러오는 중…</p>
         <div id="home-options" class="home-options">
           <div class="opt">
             <label class="opt-label" for="dataset-select">단어장</label>
             <div class="select-wrap">
-              <select id="dataset-select" class="select" disabled><option>불러오는 중…</option></select>
+              <select id="dataset-select" class="select" disabled>
+                <option>불러오는 중…</option>
+              </select>
             </div>
           </div>
+
           <div class="opt opt-direction">
             <span class="opt-label">출제 방향</span>
             <div class="direction">
@@ -35,6 +37,9 @@
             </div>
           </div>
         </div>
+
+        <p id="word-count" class="word-count" role="status">단어를 불러오는 중…</p>
+
         <button id="start-btn" class="btn btn-primary" type="button" disabled>시작하기</button>
 
         <div id="load-error" class="error-box" role="alert" hidden>
