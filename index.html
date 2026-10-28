@@ -18,7 +18,23 @@
         <p class="lead">외우려고 애쓰지 않아도 괜찮아요.<br>계속 만나다 보면 익숙해집니다.</p>
 
         <p id="word-count" class="word-count" role="status">단어를 불러오는 중…</p>
-
+        <div id="home-options" class="home-options">
+          <div class="opt">
+            <label class="opt-label" for="dataset-select">단어장</label>
+            <div class="select-wrap">
+              <select id="dataset-select" class="select" disabled><option>불러오는 중…</option></select>
+            </div>
+          </div>
+          <div class="opt opt-direction">
+            <span class="opt-label">출제 방향</span>
+            <div class="direction">
+              <span id="dir-left" class="dir-text is-on">영 → 한</span>
+              <button id="direction-switch" class="switch" type="button" role="switch" aria-checked="false"
+                      aria-label="출제 방향: 영어 단어를 보고 한국어 뜻 고르기"><span class="switch-knob"></span></button>
+              <span id="dir-right" class="dir-text">한 → 영</span>
+            </div>
+          </div>
+        </div>
         <button id="start-btn" class="btn btn-primary" type="button" disabled>시작하기</button>
 
         <div id="load-error" class="error-box" role="alert" hidden>
@@ -46,6 +62,7 @@
         <div class="word-area">
           <p id="pos-label" class="pos-label"></p>
           <h2 id="quiz-word" class="quiz-word" lang="en"></h2>
+          <ul id="quiz-meanings" class="quiz-meanings" lang="ko" hidden></ul>
         </div>
 
         <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
