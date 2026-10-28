@@ -8,6 +8,8 @@
 
   var NUM_CHOICES = 5;
   var NUM_DISTRACTORS = NUM_CHOICES - 1;
+  var DIR_EN2KO = 'en2ko';   // 영어 → 한국어 뜻
+  var DIR_KO2EN = 'ko2en';   // 한국어 뜻 → 영어
 
   /** 사용자에게 그대로 보여줄 수 있는 데이터 오류 */
   function DataError(message) {
@@ -82,7 +84,7 @@
         if (Array.isArray(json[preferred[i]])) return json[preferred[i]];
       }
     }
-    throw new DataError('data.json의 최상위 구조를 해석할 수 없습니다. 단어 객체의 배열이어야 합니다.');
+    throw new DataError('파일의 최상위 구조를 해석할 수 없습니다. 단어 객체의 배열이어야 합니다.');
   }
 
   /**
@@ -115,7 +117,7 @@
       });
     });
     if (records.length === 0) {
-      throw new DataError('data.json에서 유효한 단어를 찾지 못했습니다. 각 항목에 word 필드가 있는지 확인해 주세요.');
+      throw new DataError('파일에서 유효한 단어를 찾지 못했습니다. 각 항목에 word 필드가 있는지 확인해 주세요.');
     }
     return { records: records, skipped: skipped };
   }
@@ -144,14 +146,18 @@
 
   /**
    * 한 레코드에 대한 문제를 만든다. 5개 보기를 만들 수 없으면 null.
-   * 규칙:
+   * direction:
+   *  - 'en2ko' : 영어 단어를 보여주고 한국어 뜻(하나)을 고른다
+   *  - 'ko2en' : 단어의 한국어 뜻을 (여러 개면 모두) 보여주고 영어 단어를 고른다
+   * 규칙(두 방향 공통):
    *  - 오답 후보 = 정답과 품사 항목을 하나라도 공유하는 다른 레코드
-   *  - 후보의 뜻이 정답 레코드의 어떤 뜻과도 겹치면 후보에서 제외
+   *  - 후보의 뜻이 정답 레코드의 어떤 뜻과도 겹치면 후보에서 제외(정답이 둘로 해석되는 것 방지)
    *  - 표시되는 보기 문구는 서로 중복되지 않음
-   *  - 뜻이 여러 개면 보기 하나에는 항목 하나만 사용
+   *  - en2ko 에서 뜻이 여러 개면 보기 하나에는 항목 하나만 사용
    */
-  QuizEngine.prototype.buildQuestion = function (answerRec) {
+  QuizEngine.prototype.buildQuestion = function (answerRec, direction) {
     var rng = this.rng;
+    var toEnglish = direction === DIR_KO2EN;
 
     var seen = new Set();
     var candidates = [];
@@ -165,7 +171,7 @@
     }, this);
 
     var forbidden = new Set(answerRec.meaningList.map(normKey));
-    var answerText = pick(answerRec.meaningList, rng);
+    var answerText = toEnglish ? answerRec.word : pick(answerRec.meaningList, rng);
     var used = new Set([normKey(answerText)]);
 
     var distractors = [];
@@ -174,7 +180,8 @@
       var cand = shuffled[i];
       var overlaps = cand.meaningList.some(function (m) { return forbidden.has(normKey(m)); });
       if (overlaps) continue;
-      var usable = cand.meaningList.filter(function (m) { return !used.has(normKey(m)); });
+      var texts = toEnglish ? [cand.word] : cand.meaningList;
+      var usable = texts.filter(function (t) { return !used.has(normKey(t)); });
       if (usable.length === 0) continue;
       var text = pick(usable, rng);
       used.add(normKey(text));
@@ -188,6 +195,9 @@
 
     return {
       record: answerRec,
+      direction: toEnglish ? DIR_KO2EN : DIR_EN2KO,
+      promptWord: toEnglish ? null : answerRec.word,                       // en2ko: 제시할 영어 단어
+      promptMeanings: toEnglish ? answerRec.meaningList.slice() : null,    // ko2en: 제시할 뜻 전체
       choices: choices.map(function (c) { return c.text; }),
       correctIndex: correctIndex,
       correctText: answerText
@@ -198,18 +208,19 @@
    * 다음 문제. 문제 단어는 이전 출제와 무관하게 전체에서 독립적으로 균등 선택한다.
    * 선택한 단어로 보기를 만들 수 없을 때만 다시 뽑는다(안전하게 건너뜀).
    */
-  QuizEngine.prototype.nextQuestion = function () {
+  QuizEngine.prototype.nextQuestion = function (direction) {
+    direction = direction === DIR_KO2EN ? DIR_KO2EN : DIR_EN2KO;
     for (var t = 0; t < 200; t++) {
-      var q = this.buildQuestion(pick(this.eligible, this.rng));
+      var q = this.buildQuestion(pick(this.eligible, this.rng), direction);
       if (q) return q;
     }
     // 보기를 만들 수 있는 단어가 매우 드문 경우: 전수 탐색
     var order = shuffle(this.eligible, this.rng);
     for (var i = 0; i < order.length; i++) {
-      var q2 = this.buildQuestion(order[i]);
+      var q2 = this.buildQuestion(order[i], direction);
       if (q2) return q2;
     }
-    throw new DataError('같은 품사의 서로 다른 뜻 5개를 만들 수 있는 단어가 없어 문제를 출제할 수 없습니다.');
+    throw new DataError('같은 품사의 서로 다른 보기 5개를 만들 수 있는 단어가 없어 문제를 출제할 수 없습니다.');
   };
 
   /* ------------------------------------------------------------------ */
@@ -283,6 +294,8 @@
     DataError: DataError,
     normalizeRecords: normalizeRecords,
     QuizEngine: QuizEngine,
+    DIR_EN2KO: DIR_EN2KO,
+    DIR_KO2EN: DIR_KO2EN,
     QuizSession: QuizSession,
     Stopwatch: Stopwatch,
     formatClock: formatClock,
